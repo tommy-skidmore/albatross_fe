@@ -41,7 +41,7 @@ const map = (function() {
             container  : 'map',
             zoom       : 10,
             center     : initialCentre,
-            style      : 'mapbox://styles/mapbox/mapbox.mapbox-terrain-v2',
+            style      : 'mapbox://styles/mapbox/outdoors-v11',
             bearingSnap: 10,
             dragRotate : false //https://github.com/mapbox/mapbox-gl-js/issues/4297
         });
