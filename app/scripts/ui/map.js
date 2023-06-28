@@ -12,7 +12,8 @@ when.delay    = require("when/delay");
 const map = (function() {
 
     const mapElement = $("#map");
-    const initialCentre = new L.LatLng(49.977722, 14.064453);
+    const initialCentre = new L.LatLng(36.851703, -76.025203);
+    const destCentre = new L.LatLng(36.860540, -76.017505);
 
     function leaflet() {
         let OpenStreetMap_Mapnik = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -45,6 +46,25 @@ const map = (function() {
             bearingSnap: 10,
             dragRotate : false //https://github.com/mapbox/mapbox-gl-js/issues/4297
         });
+        const initial_marker = new mapboxgl.Marker({
+            color: "#FF0000",
+            draggable: true
+        }) 
+        .setLngLat(initialCentre)
+        .addTo(map)
+        .on("dragend", (e)=> {
+            console.log('%c[Start Pin] Coordinates:', 'color: red', initial_marker.getLngLat());
+        });
+        const first_dest_marker = new mapboxgl.Marker({
+            color: "#0000FF",
+            draggable: true
+        })
+        .setLngLat(destCentre)
+        .addTo(map)
+        .on("dragend", (e)=> {
+            console.log('%c[End Pin] Coordinates:', 'color: red', first_dest_marker.getLngLat());
+        });
+            
     }
 
     mapbox();
