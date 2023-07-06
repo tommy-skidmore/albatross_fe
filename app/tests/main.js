@@ -16,3 +16,5 @@ L.map = function() {
 	}
 	return _map;
 };
+
+const socket = new WebSocket("ws://localhost:8080")

@@ -8,8 +8,8 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Zikes</title>
-    <link rel="icon" type="image/png" href="graphics/Zikes_logo.png" />
+    <title>Project Albatross</title>
+    <link rel="icon" type="image/png" href="graphics/Albatross.png" />
     <!-- Bootstrap core CSS -->
     <link href="//cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.6/superhero/bootstrap.css" rel="stylesheet">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.3/leaflet.css" />
@@ -26,14 +26,49 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
   </head>
+  <style>
+    .popup {
+      display: none;
+      position: fixed;
+      top: 20%;
+      left: 80%;
+      transform: translate(-50%, -50%);
+      background: #6a9495;
+      padding: 20px;
+      border: 1px solid #ccc;
+      color: #fdfdfd;
+    }
 
+    #closeButton {
+      color: black; /* Change the font color to black */
+    }
+  
+  </style>
   <body class="room-for-navbar">
 
     <nav class="navbar navbar-default navbar-fixed-top">
 
       <ul class="nav navbar-nav pull-right">
-        <li id="loginNavItem"><a href="#">Login</a></li>
+        <li id="Confirm_Pins"><a href="#"> Confirm Pins </a></li>
       </ul>
+
+      <div id="popup" class="popup">
+        <h3>Confirm Pin Location?</h3>
+        <p>WARNING: RPIC has the responsibililty to maintain the safe control of the vehicle throughout the mission. </p>
+        <button onclick="hidePopup()">Close</button>
+      </div>
+      <script>
+        function showPopup() {
+          document.getElementById('popup').style.display = 'block';
+        }
+    
+        function hidePopup() {
+          document.getElementById('popup').style.display = 'none';
+        }
+    
+        var confirmPinsBtn = document.getElementById('Confirm_Pins');
+        confirmPinsBtn.addEventListener('click', showPopup);
+      </script>
 
       <div class="container">
         <div class="navbar-header">
@@ -43,20 +78,20 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <img src="graphics/Zikes_logo.png" style="height: 34px;margin-top: 7px;"/>
-          <a class="navbar-brand" style="margin-top:4px;" href="#">Zikes</a>
+          <img src="graphics/Albatross.png" style="height: 34px;margin-top: 7px;"/>
+          <a class="navbar-brand" style="margin-top:4px;" href="#">Project Albatross</a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
 
           <ul class="nav navbar-nav" style="margin-top:4px;">
             <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
                 <ul class="dropdown-menu">
-                  <li class="disabled" data-toggle="tooltip" title="under construction"><a href="#">Planning Trips</a></li>
+                  <li class="disabled" data-toggle="tooltip" title="working"><a href="#">DroneUp 2023 Internship Project</a></li>
               </ul>
             </li>
           </ul>
-
         </div><!--/.nav-collapse -->
+      </script>
 
       </div>
     </nav>

@@ -54,6 +54,7 @@ const map = (function() {
         .addTo(map)
         .on("dragend", (e)=> {
             console.log('%c[Start Pin] Coordinates:', 'color: red', initial_marker.getLngLat());
+            //socket.send(initial_marker.getLngLat());
         });
         const first_dest_marker = new mapboxgl.Marker({
             color: "#0000FF",
@@ -66,7 +67,6 @@ const map = (function() {
         });
             
     }
-
     mapbox();
     function test() { return true; }
 
