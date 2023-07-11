@@ -8,7 +8,7 @@
 
 const when      = require("when");
 when.delay    = require("when/delay");
-
+const turf = require('@turf/turf');
 const map = (function() {
 
     const mapElement = $("#map");
@@ -48,17 +48,26 @@ const map = (function() {
         });
         const initial_marker = new mapboxgl.Marker({
             color: "#FF0000",
-            draggable: true
+            draggable: true,
+            clickTolerance: 10
         }) 
         .setLngLat(initialCentre)
         .addTo(map)
         .on("dragend", (e)=> {
-            console.log('%c[Start Pin] Coordinates:', 'color: red', initial_marker.getLngLat());
-            //socket.send(initial_marker.getLngLat());
+            const initial_pin_location = initial_marker.getLngLat(); //object ipl
+            console.log('%c[Start Pin] Coordinates:', 'color: red', initial_pin_location); //log pin location to console
+            // Remove the existing circle if it exists
+            var center = initial_pin_location.toArray();
+            var radius = 100;
+            var options = {steps: 50, units: 'kilometers', properties: {foo: 'bar'}};
+            var circle = turf.circle(center, radius, options);
+            // Add the circle feature to the map
+            L.geoJSON(circle).addTo(map);
         });
         const first_dest_marker = new mapboxgl.Marker({
             color: "#0000FF",
-            draggable: true
+            draggable: true,
+            clickTolerance: 10
         })
         .setLngLat(destCentre)
         .addTo(map)
@@ -69,7 +78,6 @@ const map = (function() {
     }
     mapbox();
     function test() { return true; }
-
     return {
         test : test
     };
@@ -78,4 +86,41 @@ const map = (function() {
 
 module.exports   = map;
 
-///asdlfkja;lsdkfj;lakdjf;lk
+var createGeoJSONCircle = function(center, radiusInKm, points) {
+    if(!points) points = 64;
+
+    var coords = {
+        latitude: center[0],
+        longitude: center[1]
+    };
+
+    var km = radiusInKm;
+
+    var ret = [];
+var distanceX = km/(111.320*Math.cos(coords.latitude*Math.PI/180));
+var distanceY = km/110.574;
+
+var theta, x, y;
+for(var i=0; i<points; i++) {
+    theta = (i/points)*(2*Math.PI);
+    x = distanceX*Math.cos(theta);
+    y = distanceY*Math.sin(theta);
+
+    ret.push([coords.longitude+x, coords.latitude+y]);
+}
+ret.push(ret[0]);
+
+return {
+    "type": "geojson",
+    "data": {
+        "type": "FeatureCollection",
+        "features": [{
+            "type": "Feature",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [ret]
+            }
+        }]
+    }
+};
+};
