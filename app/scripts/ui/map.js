@@ -5,10 +5,9 @@
  */
 
 'use strict';
-
 const when      = require("when");
 when.delay    = require("when/delay");
-const turf = require('@turf/turf');
+//const turf = require('@turf/turf');
 const map = (function() {
 
     const mapElement = $("#map");
@@ -36,7 +35,7 @@ const map = (function() {
         L.control.layers(baseMaps).addTo(map);
     }
 
-    function mapbox() {
+    function mapbox(socket) {
         mapboxgl.accessToken = 'pk.eyJ1IjoicmVtc3RlciIsImEiOiJjaXF6MnlrYXUwMDY3aTVubmxxdWN2M2htIn0.8FBrAn804OlX9QYW-FRVWA'
         const map = new mapboxgl.Map({
             container  : 'map',
@@ -56,13 +55,6 @@ const map = (function() {
         .on("dragend", (e)=> {
             const initial_pin_location = initial_marker.getLngLat(); //object ipl
             console.log('%c[Start Pin] Coordinates:', 'color: red', initial_pin_location); //log pin location to console
-            // Remove the existing circle if it exists
-            var center = initial_pin_location.toArray();
-            var radius = 100;
-            var options = {steps: 50, units: 'kilometers', properties: {foo: 'bar'}};
-            var circle = turf.circle(center, radius, options);
-            // Add the circle feature to the map
-            L.geoJSON(circle).addTo(map);
         });
         const first_dest_marker = new mapboxgl.Marker({
             color: "#0000FF",
@@ -74,8 +66,17 @@ const map = (function() {
         .on("dragend", (e)=> {
             console.log('%c[End Pin] Coordinates:', 'color: red', first_dest_marker.getLngLat());
         });
+
+        const confirmButton = document.getElementById('Confirm_Pins');
+        confirmButton.addEventListener('click', () => {
+            console.log("Console button pressed");
+            //const coordinates = initial_pin_location.convert([longitude, latitude]);
+            //sendCoordinates(coordinates);
+          });
+
             
     }
+
     mapbox();
     function test() { return true; }
     return {

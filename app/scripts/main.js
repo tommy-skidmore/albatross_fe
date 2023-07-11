@@ -11,14 +11,9 @@ global.zikes = {
 	ui: require('./ui/map.js') //this is to allow html refer to some entry points
 };
 
-import { initializeMap } from './map.js';
-
-initializeMap()
-
 const connectToWebSocket = (url) => {
   return new Promise((resolve, reject) => {
     const socket = new WebSocket(url);
-
     socket.addEventListener('open', () => {
       resolve(socket);
     });
@@ -41,6 +36,7 @@ const retryConnectWebSocket = async (url, maxAttempts = 10, intervalTime = 200) 
       // Uncomment the following line if you want to hold the connection
       // await new Promise((resolve) => { /* Hold the connection */ });
       socket.send("Hello Server!")
+      socket.send("Cheers");
       return socket; // Return the WebSocket object if you need to access it later
     } catch (error) {
       console.error(`WebSocket connection attempt ${currentAttempt + 1} failed. Retrying in ${intervalTime}ms...`);
@@ -51,15 +47,16 @@ const retryConnectWebSocket = async (url, maxAttempts = 10, intervalTime = 200) 
 
   throw new Error('Maximum number of connection attempts exceeded');
 };
+// export function sendCoordinates(init_location) {
+//   socket.send(init_location);
+// }
 
 // Usage example
 const websocketURL = 'ws://127.0.0.1:8080';
 retryConnectWebSocket(websocketURL)
   .then((socket) => {
     // WebSocket connection successful, you can use the socket object here
-    socket.onmessage = function (event) {
-      console.log("Received message from server:", event.data);
-    };
+    socket.send("butt");
   })
   .catch((error) => {
     console.error('WebSocket connection failed:', error);
