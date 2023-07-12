@@ -8,6 +8,18 @@
 const when      = require("when");
 when.delay    = require("when/delay");
 //const turf = require('@turf/turf');
+
+// let resolveButtonEvent;
+
+// function Listen_ConfirmPins(pin_location1) {
+//     const confirmButton = document.getElementById('Confirm_Pins');
+//     confirmButton.addEventListener('click', () => {
+//         console.log("Console button pressed");
+//         //const coordinates = //initial_marker.convert([longitude, latitude]);
+//         resolveButtonEvent();
+//       });
+// }
+
 const map = (function() {
 
     const mapElement = $("#map");
@@ -35,7 +47,7 @@ const map = (function() {
         L.control.layers(baseMaps).addTo(map);
     }
 
-    function mapbox(socket) {
+    function mapbox() {
         mapboxgl.accessToken = 'pk.eyJ1IjoicmVtc3RlciIsImEiOiJjaXF6MnlrYXUwMDY3aTVubmxxdWN2M2htIn0.8FBrAn804OlX9QYW-FRVWA'
         const map = new mapboxgl.Map({
             container  : 'map',
@@ -55,7 +67,7 @@ const map = (function() {
         .on("dragend", (e)=> {
             const initial_pin_location = initial_marker.getLngLat(); //object ipl
             console.log('%c[Start Pin] Coordinates:', 'color: red', initial_pin_location); //log pin location to console
-        });
+        })
         const first_dest_marker = new mapboxgl.Marker({
             color: "#0000FF",
             draggable: true,
@@ -65,16 +77,8 @@ const map = (function() {
         .addTo(map)
         .on("dragend", (e)=> {
             console.log('%c[End Pin] Coordinates:', 'color: red', first_dest_marker.getLngLat());
-        });
-
-        const confirmButton = document.getElementById('Confirm_Pins');
-        confirmButton.addEventListener('click', () => {
-            console.log("Console button pressed");
-            //const coordinates = initial_pin_location.convert([longitude, latitude]);
-            //sendCoordinates(coordinates);
-          });
-
-            
+        })
+        //Listen_ConfirmPins(initial_marker.getLngLat());
     }
 
     mapbox();
@@ -83,7 +87,13 @@ const map = (function() {
         test : test
     };
 
-})();
+});
+
+export const waitForButtonEvent = () => {
+    return new Promise((resolve) => {
+    resolveButtonEvent = resolve;
+   });
+}
 
 module.exports   = map;
 
