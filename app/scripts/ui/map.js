@@ -9,16 +9,8 @@ const when      = require("when");
 when.delay    = require("when/delay");
 //const turf = require('@turf/turf');
 
-// let resolveButtonEvent;
-
-// function Listen_ConfirmPins(pin_location1) {
-//     const confirmButton = document.getElementById('Confirm_Pins');
-//     confirmButton.addEventListener('click', () => {
-//         console.log("Console button pressed");
-//         //const coordinates = //initial_marker.convert([longitude, latitude]);
-//         resolveButtonEvent();
-//       });
-// }
+let initial_pin_location;
+let dest_pin_location;
 
 const map = (function() {
 
@@ -47,7 +39,7 @@ const map = (function() {
         L.control.layers(baseMaps).addTo(map);
     }
 
-    function mapbox() {
+    function mapbox(socket) {
         mapboxgl.accessToken = 'pk.eyJ1IjoicmVtc3RlciIsImEiOiJjaXF6MnlrYXUwMDY3aTVubmxxdWN2M2htIn0.8FBrAn804OlX9QYW-FRVWA'
         const map = new mapboxgl.Map({
             container  : 'map',
@@ -65,9 +57,9 @@ const map = (function() {
         .setLngLat(initialCentre)
         .addTo(map)
         .on("dragend", (e)=> {
-            const initial_pin_location = initial_marker.getLngLat(); //object ipl
+            initial_pin_location = initial_marker.getLngLat(); //object ipl
             console.log('%c[Start Pin] Coordinates:', 'color: red', initial_pin_location); //log pin location to console
-        })
+        });
         const first_dest_marker = new mapboxgl.Marker({
             color: "#0000FF",
             draggable: true,
@@ -76,9 +68,32 @@ const map = (function() {
         .setLngLat(destCentre)
         .addTo(map)
         .on("dragend", (e)=> {
-            console.log('%c[End Pin] Coordinates:', 'color: red', first_dest_marker.getLngLat());
-        })
-        //Listen_ConfirmPins(initial_marker.getLngLat());
+            dest_pin_location = first_dest_marker.getLngLat(); //object ipl
+            console.log('%c[End Pin] Coordinates:', 'color: green', dest_pin_location);
+        });
+
+        const confirmButton = document.getElementById('Confirm_Pins');
+        confirmButton.addEventListener('click', () => {
+            console.log("Console button pressed");
+              // Create and dispatch a custom event
+            if(initial_pin_location && dest_pin_location) {
+                const eventData = {
+                    initial_pin_location: initial_pin_location,
+                    dest_pin_location: dest_pin_location
+                } //create a single object of both locations
+                const customEvent = new CustomEvent('myCustomEvent', {
+                    detail: {eventData} // Pass any data you want with the event
+                    });
+                    window.dispatchEvent(customEvent);
+            }
+            else {
+                console.log("Please update both takeoff and destination locations on map.");
+                alert("Please update both takeoff and destination locations on the map.");
+            }
+
+          });
+
+            
     }
 
     mapbox();
@@ -87,13 +102,7 @@ const map = (function() {
         test : test
     };
 
-});
-
-export const waitForButtonEvent = () => {
-    return new Promise((resolve) => {
-    resolveButtonEvent = resolve;
-   });
-}
+})();
 
 module.exports   = map;
 
