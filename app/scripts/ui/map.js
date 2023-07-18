@@ -8,15 +8,17 @@
 const when      = require("when");
 when.delay    = require("when/delay");
 //const turf = require('@turf/turf');
-
-//let initial_pin_location;
+export { marker };
+let initial_pin_location;
 let dest_pin_location;
+let obs_pin_location;
 
 const map = (function() {
 
     const mapElement = $("#map");
     const initialCentre = new L.LatLng(46.9975, 31.9964);
     const destCentre = new L.LatLng(46.9979, 31.9969);
+    const obsCentre = new L.LatLng(46.9977, 31.9967);
 
     function leaflet() {
         let OpenStreetMap_Mapnik = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -39,7 +41,7 @@ const map = (function() {
         L.control.layers(baseMaps).addTo(map);
     }
 
-    function mapbox(socket) {
+    function mapbox() {
         mapboxgl.accessToken = 'pk.eyJ1IjoicmVtc3RlciIsImEiOiJjaXF6MnlrYXUwMDY3aTVubmxxdWN2M2htIn0.8FBrAn804OlX9QYW-FRVWA'
         const map = new mapboxgl.Map({
             container  : 'map',
@@ -49,17 +51,19 @@ const map = (function() {
             bearingSnap: 10,
             dragRotate : false //https://github.com/mapbox/mapbox-gl-js/issues/4297
         });
+
         const initial_marker = new mapboxgl.Marker({
             color: "#FF0000",
-            draggable: false,
+            draggable: true,
             clickTolerance: 10
         }) 
         .setLngLat(initialCentre)
         .addTo(map)
-        // .on("dragend", (e)=> {
-        //     initial_pin_location = initial_marker.getLngLat(); //object ipl
-        //     console.log('%c[Start Pin] Coordinates:', 'color: red', initial_pin_location); //log pin location to console
-        // });
+        .on("dragend", (e)=> {
+            initial_pin_location = initial_marker.getLngLat(); //object ipl
+            console.log('%c[Start Pin] Coordinates:', 'color: red', initial_pin_location); //log pin location to console
+        });
+
         const first_dest_marker = new mapboxgl.Marker({
             color: "#0000FF",
             draggable: true,
@@ -69,17 +73,38 @@ const map = (function() {
         .addTo(map)
         .on("dragend", (e)=> {
             dest_pin_location = first_dest_marker.getLngLat(); //object ipl
-            console.log('%c[End Pin] Coordinates:', 'color: green', dest_pin_location);
+            console.log('%c[End Pin] Coordinates:', 'color: blue', dest_pin_location);
         });
+
+        const obs_marker = new mapboxgl.Marker({
+            color: "#00FF00",
+            draggable: true,
+            clickTolerance: 10
+        }) 
+        .setLngLat(obsCentre)
+        .addTo(map)
+        .on("dragend", (e)=> {
+            obs_pin_location = obs_marker.getLngLat(); //object ipl
+            console.log('%c[Obs Pin] Coordinates:', 'color: green', obs_pin_location); //log pin location to console
+        });
+        var drone_pos = new mapboxgl.Marker({
+            draggable: false
+        })
+        .setLngLat(initialCentre)
+        .addTo(map);
+
+// Export the marker instance
+
 
         const confirmButton = document.getElementById('Confirm_Pins');
         confirmButton.addEventListener('click', () => {
             console.log("Console button pressed");
               // Create and dispatch a custom event
-            if(dest_pin_location) {
+            if(dest_pin_location && initial_pin_location && obs_pin_location) {
                  const eventData = {
-                //     initial_pin_location: initial_pin_location,
-                    dest_pin_location: dest_pin_location
+                    initial_pin_location: initial_pin_location,
+                    dest_pin_location: dest_pin_location,
+                    obs_pin_location: obs_pin_location
                 } //create a single object of both locations
                 const customEvent = new CustomEvent('ConfirmPinSelected', {
                     detail: {eventData} // Pass any data you want with the event
@@ -90,8 +115,12 @@ const map = (function() {
                 console.log("Please update both takeoff and destination locations on map.");
                 alert("Please update both takeoff and destination locations on the map.");
             }
-
           });
+         window.addEventListener('TeleEvent', (event) => {
+            const receivedMessage = event.detail.receivedMessage;
+            console.log(recievedMessage);
+        });
+          
 
             
     }
@@ -105,42 +134,3 @@ const map = (function() {
 })();
 
 module.exports   = map;
-
-var createGeoJSONCircle = function(center, radiusInKm, points) {
-    if(!points) points = 64;
-
-    var coords = {
-        latitude: center[0],
-        longitude: center[1]
-    };
-
-    var km = radiusInKm;
-
-    var ret = [];
-var distanceX = km/(111.320*Math.cos(coords.latitude*Math.PI/180));
-var distanceY = km/110.574;
-
-var theta, x, y;
-for(var i=0; i<points; i++) {
-    theta = (i/points)*(2*Math.PI);
-    x = distanceX*Math.cos(theta);
-    y = distanceY*Math.sin(theta);
-
-    ret.push([coords.longitude+x, coords.latitude+y]);
-}
-ret.push(ret[0]);
-
-return {
-    "type": "geojson",
-    "data": {
-        "type": "FeatureCollection",
-        "features": [{
-            "type": "Feature",
-            "geometry": {
-                "type": "Polygon",
-                "coordinates": [ret]
-            }
-        }]
-    }
-};
-};

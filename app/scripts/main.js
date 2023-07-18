@@ -62,13 +62,20 @@ retryConnectWebSocket(websocketURL)
     socket.addEventListener('message', (event) => {
       const receivedMessage = event.data;
       console.log('Received message from socket:', receivedMessage);
-      // Handle the received message as needed
+      const lngLat = parseCoordinates(receivedMessage);
+      marker.setLngLat(lngLat);    
+      //figure out how to then  draw a circle on map
     });
   })
   .catch((error) => {
     console.error('WebSocket connection failed:', error);
+    retryConnectWebSocket(websocketURL);
   });
 
 
-
+  function parseCoordinates(message) {
+    const [lat, lng] = message.split(',');
+    return [parseFloat(lng), parseFloat(lat)];
+}
+  
 
