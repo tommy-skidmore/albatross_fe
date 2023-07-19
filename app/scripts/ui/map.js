@@ -17,8 +17,8 @@ const map = (function() {
 
     const mapElement = $("#map");
     const initialCentre = new L.LatLng(46.9975, 31.9964);
-    const destCentre = new L.LatLng(46.9979, 31.9969);
-    const obsCentre = new L.LatLng(46.9977, 31.9967);
+    const destCentre = new L.LatLng(47.00, 32.00);
+    const obsCentre = new L.LatLng(46.9999, 32.00);
 
     function leaflet() {
         let OpenStreetMap_Mapnik = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
