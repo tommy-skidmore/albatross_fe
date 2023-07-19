@@ -22,7 +22,7 @@ const connectToWebSocket = (url) => {
       reject(error);
     });
   });
-};
+};//the actual action of trying to connect websocket
 
 const retryConnectWebSocket = async (url, maxAttempts = 10, intervalTime = 200) => {
   let currentAttempt = 0;
@@ -45,10 +45,10 @@ const retryConnectWebSocket = async (url, maxAttempts = 10, intervalTime = 200) 
   }
   alert("Maximum number of connection attempts exceeded: Check Server Status")
   throw new Error('Maximum number of connection attempts exceeded');
-};
+}; //keep trying to connect to websocket, server must be started first
 
 // Usage example
-const websocketURL = 'ws://127.0.0.1:8080';
+const websocketURL = 'ws://127.0.0.1:8080'; //ip + port
 retryConnectWebSocket(websocketURL)
   .then((socket) => {
     // WebSocket connection successful, you can use the socket object here
@@ -63,10 +63,13 @@ retryConnectWebSocket(websocketURL)
       const receivedMessage = event.data;
       console.log('Received message from socket:', receivedMessage);
       const lngLat = parseCoordinates(receivedMessage);
-      marker.setLngLat(lngLat);    
+      const MarkerEvent = new CustomEvent('updateMarkerPosition', {
+        detail: lngLat
+      });
+      window.dispatchEvent(MarkerEvent); 
       //figure out how to then  draw a circle on map
     });
-  })
+  })//sits in the "then" until an event happens: confirmpins button is selected -> forward coordinates over socket, teledata recieved -> display on map
   .catch((error) => {
     console.error('WebSocket connection failed:', error);
     retryConnectWebSocket(websocketURL);

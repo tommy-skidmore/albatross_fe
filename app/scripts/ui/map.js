@@ -8,7 +8,7 @@
 const when      = require("when");
 when.delay    = require("when/delay");
 //const turf = require('@turf/turf');
-export { marker };
+
 let initial_pin_location;
 let dest_pin_location;
 let obs_pin_location;
@@ -55,7 +55,7 @@ const map = (function() {
         const initial_marker = new mapboxgl.Marker({
             color: "#FF0000",
             draggable: true,
-            clickTolerance: 10
+            clickTolerance: 10,
         }) 
         .setLngLat(initialCentre)
         .addTo(map)
@@ -63,6 +63,7 @@ const map = (function() {
             initial_pin_location = initial_marker.getLngLat(); //object ipl
             console.log('%c[Start Pin] Coordinates:', 'color: red', initial_pin_location); //log pin location to console
         });
+        initial_pin_location = initial_marker.getLngLat();
 
         const first_dest_marker = new mapboxgl.Marker({
             color: "#0000FF",
@@ -75,7 +76,7 @@ const map = (function() {
             dest_pin_location = first_dest_marker.getLngLat(); //object ipl
             console.log('%c[End Pin] Coordinates:', 'color: blue', dest_pin_location);
         });
-
+        dest_pin_location = first_dest_marker.getLngLat();
         const obs_marker = new mapboxgl.Marker({
             color: "#00FF00",
             draggable: true,
@@ -87,15 +88,13 @@ const map = (function() {
             obs_pin_location = obs_marker.getLngLat(); //object ipl
             console.log('%c[Obs Pin] Coordinates:', 'color: green', obs_pin_location); //log pin location to console
         });
+        obs_pin_location = obs_marker.getLngLat(); //object ipl
+
         var drone_pos = new mapboxgl.Marker({
             draggable: false
         })
         .setLngLat(initialCentre)
         .addTo(map);
-
-// Export the marker instance
-
-
         const confirmButton = document.getElementById('Confirm_Pins');
         confirmButton.addEventListener('click', () => {
             console.log("Console button pressed");
@@ -112,17 +111,16 @@ const map = (function() {
                     window.dispatchEvent(customEvent);
             }
             else {
-                console.log("Please update both takeoff and destination locations on map.");
+                console.log("Please update both takeoff, obstacle and destination locations on map.");
                 alert("Please update both takeoff and destination locations on the map.");
             }
           });
-         window.addEventListener('TeleEvent', (event) => {
-            const receivedMessage = event.detail.receivedMessage;
-            console.log(recievedMessage);
+         window.addEventListener('updateMarkerPosition', (event) => {
+            const lnglat = event.detail;
+            drone_pos.setLngLat(lnglat);
         });
-          
 
-            
+// Export the marker instance       
     }
 
     mapbox();
@@ -130,6 +128,7 @@ const map = (function() {
     return {
         test : test
     };
+    
 
 })();
 
