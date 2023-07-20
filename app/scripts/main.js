@@ -49,6 +49,7 @@ const retryConnectWebSocket = async (url, maxAttempts = 10, intervalTime = 200) 
 
 // Usage example
 const websocketURL = 'ws://127.0.0.1:8080'; //ip + port
+let TeleCount = 0;
 retryConnectWebSocket(websocketURL)
   .then((socket) => {
     // WebSocket connection successful, you can use the socket object here
@@ -67,6 +68,11 @@ retryConnectWebSocket(websocketURL)
         detail: lngLat
       });
       window.dispatchEvent(MarkerEvent); 
+      TeleCount++;
+      if(TeleCount % 25 == 0) {
+        console.log("sending keep alive");
+        socket.send("Keeping Connection Alive");
+      }
       //figure out how to then  draw a circle on map
     });
   })//sits in the "then" until an event happens: confirmpins button is selected -> forward coordinates over socket, teledata recieved -> display on map

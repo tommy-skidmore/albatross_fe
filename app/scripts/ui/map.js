@@ -19,6 +19,7 @@ const map = (function() {
     const initialCentre = new L.LatLng(46.9975, 31.9964);
     const destCentre = new L.LatLng(47.00, 32.00);
     const obsCentre = new L.LatLng(46.9999, 32.00);
+    const droneCentre = new L.LatLng(0, 0);
 
     function leaflet() {
         let OpenStreetMap_Mapnik = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -93,7 +94,7 @@ const map = (function() {
         var drone_pos = new mapboxgl.Marker({
             draggable: false
         })
-        .setLngLat(initialCentre)
+        .setLngLat(droneCentre)
         .addTo(map);
         const confirmButton = document.getElementById('Confirm_Pins');
         confirmButton.addEventListener('click', () => {
