@@ -11,7 +11,9 @@ when.delay    = require("when/delay");
 
 let initial_pin_location;
 let dest_pin_location;
-let obs_pin_location;
+let obs_pin1_location;
+let obs_pin2_location;
+
 
 const map = (function() {
 
@@ -81,7 +83,8 @@ const map = (function() {
         });
         console.log(dest_marker.getPopup()); // return the popup instance
         dest_pin_location = dest_marker.getLngLat();
-        const obs_marker = new mapboxgl.Marker({
+
+        const obs_marker1 = new mapboxgl.Marker({
             color: "#FF0000",
             draggable: true,
             clickTolerance: 10
@@ -90,10 +93,24 @@ const map = (function() {
         .addTo(map)
         .setPopup(new mapboxgl.Popup().setHTML("<p style='color: red'>Obstacle 1 Pin</p>"))
         .on("dragend", (e)=> {
-            obs_pin_location = obs_marker.getLngLat(); //object ipl
-            console.log('%c[Obs Pin] Coordinates:', 'color: green', obs_pin_location); //log pin location to console
+            obs_pin1_location = obs_marker1.getLngLat(); //object ipl
+            console.log('%c[Obs Pin] Coordinates:', 'color: green', obs_pin1_location); //log pin location to console
         });
-        obs_pin_location = obs_marker.getLngLat(); //object ipl
+        obs_pin1_location = obs_marker1.getLngLat(); //object ipl
+
+        const obs_marker2 = new mapboxgl.Marker({
+            color: "#C00000",
+            draggable: true,
+            clickTolerance: 10
+        }) 
+        .setLngLat(obsCentre)
+        .addTo(map)
+        .setPopup(new mapboxgl.Popup().setHTML("<p style='color: red'>Obstacle 2 Pin</p>"))
+        .on("dragend", (e)=> {
+            obs_pin2_location = obs_marker2.getLngLat(); //object ipl
+            console.log('%c[Obs Pin] Coordinates:', 'color: green', obs_pin2_location); //log pin location to console
+        });
+        obs_pin2_location = obs_marker2.getLngLat(); //object ipl
 
         var drone_pos = new mapboxgl.Marker({
             draggable: false,
@@ -102,24 +119,31 @@ const map = (function() {
         .setLngLat(droneCentre)
         .addTo(map)
         .setPopup(new mapboxgl.Popup().setHTML("<p style='color: black'>Current Drone Location</p>"));
+
         const confirmButton = document.getElementById('Confirm_Pins');
         confirmButton.addEventListener('click', () => {
             console.log("Console button pressed");
               // Create and dispatch a custom event
-            if(dest_pin_location && initial_pin_location && obs_pin_location) {
+            if(dest_pin_location && initial_pin_location && obs_pin1_location) {
                  const eventData = {
                     initial_pin_location: initial_pin_location,
                     dest_pin_location: dest_pin_location,
-                    obs_pin_location: obs_pin_location
+                    obs_pin1_location: obs_pin1_location,
+                    obs_pin2_location: obs_pin2_location
+
                 } //create a single object of both locations
+                initial_marker.draggable = false;
+                obs_marker1.draggable = false;
+                obs_marker2.draggable = false;
+                dest_marker.draggable = false; //make all pins no longer draggable
                 const customEvent = new CustomEvent('ConfirmPinSelected', {
                     detail: {eventData} // Pass any data you want with the event
                     });
                     window.dispatchEvent(customEvent);
             }
             else {
-                console.log("Please update both takeoff, obstacle and destination locations on map.");
-                alert("Please update both takeoff and destination locations on the map.");
+                console.log("Please update takeoff, obstacles and destination locations on map.");
+                alert("Please update takeoff, obstacles and destination locations on map.");
             }
           });
          window.addEventListener('updateMarkerPosition', (event) => {
