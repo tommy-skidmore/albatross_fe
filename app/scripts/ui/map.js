@@ -54,37 +54,41 @@ const map = (function() {
         });
 
         const initial_marker = new mapboxgl.Marker({
-            color: "#FF0000",
+            color: "#00FF00",
             draggable: true,
             clickTolerance: 10,
         }) 
         .setLngLat(initialCentre)
         .addTo(map)
+        .setPopup(new mapboxgl.Popup().setHTML("<p style='color: green'>Starting Location</p>"))
         .on("dragend", (e)=> {
             initial_pin_location = initial_marker.getLngLat(); //object ipl
             console.log('%c[Start Pin] Coordinates:', 'color: red', initial_pin_location); //log pin location to console
         });
         initial_pin_location = initial_marker.getLngLat();
 
-        const first_dest_marker = new mapboxgl.Marker({
-            color: "#0000FF",
+        const dest_marker = new mapboxgl.Marker({
+            color: "#FF00FF",
             draggable: true,
             clickTolerance: 10
         })
         .setLngLat(destCentre)
         .addTo(map)
+        .setPopup(new mapboxgl.Popup().setHTML("<p style='color: pink'>Destination Pin</p>"))
         .on("dragend", (e)=> {
-            dest_pin_location = first_dest_marker.getLngLat(); //object ipl
+            dest_pin_location = dest_marker.getLngLat(); //object ipl
             console.log('%c[End Pin] Coordinates:', 'color: blue', dest_pin_location);
         });
-        dest_pin_location = first_dest_marker.getLngLat();
+        console.log(dest_marker.getPopup()); // return the popup instance
+        dest_pin_location = dest_marker.getLngLat();
         const obs_marker = new mapboxgl.Marker({
-            color: "#00FF00",
+            color: "#FF0000",
             draggable: true,
             clickTolerance: 10
         }) 
         .setLngLat(obsCentre)
         .addTo(map)
+        .setPopup(new mapboxgl.Popup().setHTML("<p style='color: red'>Obstacle 1 Pin</p>"))
         .on("dragend", (e)=> {
             obs_pin_location = obs_marker.getLngLat(); //object ipl
             console.log('%c[Obs Pin] Coordinates:', 'color: green', obs_pin_location); //log pin location to console
@@ -92,10 +96,12 @@ const map = (function() {
         obs_pin_location = obs_marker.getLngLat(); //object ipl
 
         var drone_pos = new mapboxgl.Marker({
-            draggable: false
+            draggable: false,
+            color: "FFFF00"
         })
         .setLngLat(droneCentre)
-        .addTo(map);
+        .addTo(map)
+        .setPopup(new mapboxgl.Popup().setHTML("<p style='color: black'>Current Drone Location</p>"));
         const confirmButton = document.getElementById('Confirm_Pins');
         confirmButton.addEventListener('click', () => {
             console.log("Console button pressed");
