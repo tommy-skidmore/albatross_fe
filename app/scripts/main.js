@@ -69,8 +69,8 @@ retryConnectWebSocket(websocketURL)
       });
       window.dispatchEvent(MarkerEvent); 
       TeleCount++;
-      if(TeleCount % 25 == 0) {
-        console.log("sending keep alive");
+      if(TeleCount % 50 == 0) {
+        console.log("PING");
         socket.send("Keeping Connection Alive");
       }
       //figure out how to then  draw a circle on map

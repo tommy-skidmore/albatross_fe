@@ -19,9 +19,10 @@ const map = (function() {
 
     const mapElement = $("#map");
     const initialCentre = new L.LatLng(46.9975, 31.9964);
-    const destCentre = new L.LatLng(47.00, 32.00);
-    const obsCentre = new L.LatLng(46.9999, 32.00);
-    const droneCentre = new L.LatLng(0, 0);
+    const destCentre = new L.LatLng(46.99752, 31.99753);
+    const obsCentre2 = new L.LatLng(46.99751, 31.99714);
+    const obsCentre1 = new L.LatLng(46.99751, 31.99674);
+    const droneCentre = new L.LatLng(0, 0); //default pin locations
 
     function leaflet() {
         let OpenStreetMap_Mapnik = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -65,9 +66,8 @@ const map = (function() {
         .setPopup(new mapboxgl.Popup().setHTML("<p style='color: green'>Starting Location</p>"))
         .on("dragend", (e)=> {
             initial_pin_location = initial_marker.getLngLat(); //object ipl
-            console.log('%c[Start Pin] Coordinates:', 'color: red', initial_pin_location); //log pin location to console
+            console.log('%c[Start Pin] Coordinates:', 'color: green', initial_pin_location); //log pin location to console
         });
-        initial_pin_location = initial_marker.getLngLat();
 
         const dest_marker = new mapboxgl.Marker({
             color: "#FF00FF",
@@ -79,7 +79,7 @@ const map = (function() {
         .setPopup(new mapboxgl.Popup().setHTML("<p style='color: pink'>Destination Pin</p>"))
         .on("dragend", (e)=> {
             dest_pin_location = dest_marker.getLngLat(); //object ipl
-            console.log('%c[End Pin] Coordinates:', 'color: blue', dest_pin_location);
+            console.log('%c[End Pin] Coordinates:', 'color: pink', dest_pin_location);
         });
         console.log(dest_marker.getPopup()); // return the popup instance
         dest_pin_location = dest_marker.getLngLat();
@@ -89,12 +89,12 @@ const map = (function() {
             draggable: true,
             clickTolerance: 10
         }) 
-        .setLngLat(obsCentre)
+        .setLngLat(obsCentre1)
         .addTo(map)
         .setPopup(new mapboxgl.Popup().setHTML("<p style='color: red'>Obstacle 1 Pin</p>"))
         .on("dragend", (e)=> {
             obs_pin1_location = obs_marker1.getLngLat(); //object ipl
-            console.log('%c[Obs Pin] Coordinates:', 'color: green', obs_pin1_location); //log pin location to console
+            console.log('%c[Obs 1 Pin] Coordinates:', 'color: red', obs_pin1_location); //log pin location to console
         });
         obs_pin1_location = obs_marker1.getLngLat(); //object ipl
 
@@ -103,12 +103,12 @@ const map = (function() {
             draggable: true,
             clickTolerance: 10
         }) 
-        .setLngLat(obsCentre)
+        .setLngLat(obsCentre2)
         .addTo(map)
         .setPopup(new mapboxgl.Popup().setHTML("<p style='color: red'>Obstacle 2 Pin</p>"))
         .on("dragend", (e)=> {
             obs_pin2_location = obs_marker2.getLngLat(); //object ipl
-            console.log('%c[Obs Pin] Coordinates:', 'color: green', obs_pin2_location); //log pin location to console
+            console.log('%c[Obs 2 Pin] Coordinates:', 'color: red', obs_pin2_location); //log pin location to console
         });
         obs_pin2_location = obs_marker2.getLngLat(); //object ipl
 
@@ -124,7 +124,7 @@ const map = (function() {
         confirmButton.addEventListener('click', () => {
             console.log("Console button pressed");
               // Create and dispatch a custom event
-            if(dest_pin_location && initial_pin_location && obs_pin1_location) {
+            if(initial_pin_location && dest_pin_location && initial_pin_location && obs_pin1_location && obs_pin2_location) {
                  const eventData = {
                     initial_pin_location: initial_pin_location,
                     dest_pin_location: dest_pin_location,
@@ -132,23 +132,20 @@ const map = (function() {
                     obs_pin2_location: obs_pin2_location
 
                 } //create a single object of both locations
-                initial_marker.draggable = false;
-                obs_marker1.draggable = false;
-                obs_marker2.draggable = false;
-                dest_marker.draggable = false; //make all pins no longer draggable
                 const customEvent = new CustomEvent('ConfirmPinSelected', {
                     detail: {eventData} // Pass any data you want with the event
                     });
                     window.dispatchEvent(customEvent);
             }
             else {
-                console.log("Please update takeoff, obstacles and destination locations on map.");
-                alert("Please update takeoff, obstacles and destination locations on map.");
+                console.log("Please update takeoff location on map.");
+                alert("Please update takeoff location on map."); 
+                //takeoff location must be updated to correctly update instance of sim
             }
           });
          window.addEventListener('updateMarkerPosition', (event) => {
             const lnglat = event.detail;
-            drone_pos.setLngLat(lnglat);
+            drone_pos.setLngLat(lnglat); //update drone pin based on recieved telemetry data
         });
 
 // Export the marker instance       
