@@ -7,21 +7,20 @@
 'use strict';
 const when      = require("when");
 when.delay    = require("when/delay");
-//const turf = require('@turf/turf');
+//const MapboxCircle = require('mapbox-gl-circle');
 
 let initial_pin_location;
 let dest_pin_location;
 let obs_pin1_location;
 let obs_pin2_location;
 
-
 const map = (function() {
 
     const mapElement = $("#map");
-    const initialCentre = new L.LatLng(46.9975, 31.9964);
-    const destCentre = new L.LatLng(46.99752, 31.99753);
-    const obsCentre2 = new L.LatLng(46.99751, 31.99714);
-    const obsCentre1 = new L.LatLng(46.99751, 31.99674);
+    const initialCentre = new L.LatLng(36.842377425371055, -76.18431779093316);
+    const destCentre = new L.LatLng(36.84147993051485, -76.18446478067798);
+    const obsCentre1 = new L.LatLng(36.84238162542741, -76.18451151043253);
+    const obsCentre2 = new L.LatLng(36.841810585292706, -76.18438387568935);
     const droneCentre = new L.LatLng(0, 0); //default pin locations
 
     function leaflet() {
@@ -50,16 +49,24 @@ const map = (function() {
         const map = new mapboxgl.Map({
             container  : 'map',
             zoom       : 16,
-            center     : initialCentre,
+            center     : obsCentre2,
             style      : 'mapbox://styles/mapbox/outdoors-v11',
             bearingSnap: 10,
             dragRotate : false //https://github.com/mapbox/mapbox-gl-js/issues/4297
         });
 
+        var Obs1Circle = new MapboxCircle(obsCentre1, 10, {
+            fillColor: '#FF0000'
+        }).addTo(map);
+
+        var Obs2Circle = new MapboxCircle(obsCentre2, 10, {
+            fillColor: '#C00000'
+        }).addTo(map);//create the two obstacle circles
+    
         const initial_marker = new mapboxgl.Marker({
             color: "#00FF00",
             draggable: true,
-            clickTolerance: 10,
+            clickTolerance: 10
         }) 
         .setLngLat(initialCentre)
         .addTo(map)
@@ -94,6 +101,7 @@ const map = (function() {
         .setPopup(new mapboxgl.Popup().setHTML("<p style='color: red'>Obstacle 1 Pin</p>"))
         .on("dragend", (e)=> {
             obs_pin1_location = obs_marker1.getLngLat(); //object ipl
+            Obs1Circle.setCenter(obs_pin1_location); //update new collision radius
             console.log('%c[Obs 1 Pin] Coordinates:', 'color: red', obs_pin1_location); //log pin location to console
         });
         obs_pin1_location = obs_marker1.getLngLat(); //object ipl
@@ -108,6 +116,7 @@ const map = (function() {
         .setPopup(new mapboxgl.Popup().setHTML("<p style='color: red'>Obstacle 2 Pin</p>"))
         .on("dragend", (e)=> {
             obs_pin2_location = obs_marker2.getLngLat(); //object ipl
+            Obs2Circle.setCenter(obs_pin2_location); //update new collision radius
             console.log('%c[Obs 2 Pin] Coordinates:', 'color: red', obs_pin2_location); //log pin location to console
         });
         obs_pin2_location = obs_marker2.getLngLat(); //object ipl
@@ -119,12 +128,11 @@ const map = (function() {
         .setLngLat(droneCentre)
         .addTo(map)
         .setPopup(new mapboxgl.Popup().setHTML("<p style='color: black'>Current Drone Location</p>"));
-
         const confirmButton = document.getElementById('Confirm_Pins');
         confirmButton.addEventListener('click', () => {
             console.log("Console button pressed");
               // Create and dispatch a custom event
-            if(initial_pin_location && dest_pin_location && initial_pin_location && obs_pin1_location && obs_pin2_location) {
+            if(initial_pin_location && dest_pin_location && obs_pin1_location && obs_pin2_location) {
                  const eventData = {
                     initial_pin_location: initial_pin_location,
                     dest_pin_location: dest_pin_location,

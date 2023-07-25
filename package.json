@@ -10,6 +10,8 @@
     "test": "gulp test"
   },
   "devDependencies": {
+    "@babel/core": "^7.22.9",
+    "babelify": "^10.0.0",
     "browserify": "^13.0.0",
     "browserify-shim": "^3.7.0",
     "connect": "^2.29.1",
@@ -46,9 +48,10 @@
     "vinyl-source-stream": "^1.1.0"
   },
   "dependencies": {
-    "when": "~3.7.7",
-    "mustache": "~2.2.1",
     "hellojs": "~1.10.1",
-    "leaflet-rotatedmarker": "~0.1.0"
+    "leaflet-rotatedmarker": "~0.1.0",
+    "mapbox-gl-circle": "^1.6.7",
+    "mustache": "~2.2.1",
+    "when": "~3.7.7"
   }
 }
