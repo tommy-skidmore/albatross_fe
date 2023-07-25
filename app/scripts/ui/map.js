@@ -18,6 +18,8 @@ const map = (function() {
 
     const mapElement = $("#map");
     const initialCentre = new L.LatLng(36.842377425371055, -76.18431779093316);
+    // const initialCentre = new L.LatLng(36.84237742537105, -76.1843177909331);
+    // const destCentre = new L.LatLng(36.842377425371055, -76.18431779093316);
     const destCentre = new L.LatLng(36.84147993051485, -76.18446478067798);
     const obsCentre1 = new L.LatLng(36.84238162542741, -76.18451151043253);
     const obsCentre2 = new L.LatLng(36.841810585292706, -76.18438387568935);
